@@ -8,9 +8,10 @@ value class PlayerId(val id: String)
 
 @Immutable
 data class Coup(
-  val players: List<Player>
+  val players: List<Player>,
 )
 
+@Immutable
 data class Player(
   val id: PlayerId,
   val name: String,
@@ -21,3 +22,16 @@ data class Player(
 enum class Card {
   Ambassador, Assassin, Captain, Contessa, Duke,
 }
+
+@Immutable
+data class Lobby(
+  val code: String,
+  val players: List<LobbyPlayer>,
+)
+
+@Immutable
+data class LobbyPlayer(
+  val id: PlayerId,
+  val name: String,
+  val ready: Boolean,
+)
