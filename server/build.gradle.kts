@@ -7,7 +7,7 @@ plugins {
 group = "ca.allanwang"
 version = "1.0.0"
 application {
-    mainClass.set("ca.allanwang.ApplicationKt")
+    mainClass.set("ca.allanwang.game.ApplicationKt")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=${extra["io.ktor.development"] ?: "false"}")
 }
 

@@ -1,4 +1,4 @@
-package ca.allanwang
+package ca.allanwang.game
 
 class WasmPlatform: Platform {
     override val name: String = "Web with Kotlin/Wasm"

@@ -1,4 +1,4 @@
-package ca.allanwang
+package ca.allanwang.game.coup
 
 data class Coup(
     val players: List<Player>

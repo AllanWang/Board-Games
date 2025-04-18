@@ -1,4 +1,4 @@
-package ca.allanwang
+package ca.allanwang.game
 
 class Greeting {
     private val platform = getPlatform()

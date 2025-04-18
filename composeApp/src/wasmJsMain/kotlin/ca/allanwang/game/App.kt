@@ -1,4 +1,4 @@
-package ca.allanwang
+package ca.allanwang.game
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image

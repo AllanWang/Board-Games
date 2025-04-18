@@ -1,4 +1,4 @@
-package ca.allanwang
+package ca.allanwang.game
 
 import io.ktor.server.application.*
 import io.ktor.server.engine.*

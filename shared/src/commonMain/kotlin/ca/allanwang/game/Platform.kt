@@ -1,4 +1,4 @@
-package ca.allanwang
+package ca.allanwang.game
 
 interface Platform {
     val name: String
