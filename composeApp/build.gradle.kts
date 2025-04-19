@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
@@ -41,7 +40,6 @@ kotlin {
       implementation(compose.components.uiToolingPreview)
       implementation(libs.androidx.lifecycle.viewmodel)
       implementation(libs.androidx.lifecycle.runtime.compose)
-//      implementation(libs.androidx.navigation.runtime)
       implementation(libs.androidx.navigation.compose)
       implementation(projects.shared)
       implementation(libs.ktor.client.core)
@@ -50,7 +48,6 @@ kotlin {
 
     wasmJsMain.dependencies {
       implementation(libs.ktor.client.js)
-//      implementation(libs.androidx.navigation.compose.wasm.js)
     }
   }
 }
