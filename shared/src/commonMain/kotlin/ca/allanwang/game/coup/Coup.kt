@@ -9,6 +9,7 @@ value class PlayerId(val id: String)
 @Immutable
 data class Coup(
   val players: List<Player>,
+  val logs: List<String>
 )
 
 @Immutable
