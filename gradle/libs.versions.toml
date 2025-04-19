@@ -1,6 +1,6 @@
 [versions]
 androidx-lifecycle = "2.8.4"
-androidx-navigation = "2.9.0-alpha15"
+androidx-navigation = "2.8.0-alpha10"
 compose-multiplatform = "1.7.3"
 junit = "4.13.2"
 kotlin = "2.1.20"
@@ -13,6 +13,7 @@ kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+androidx-navigation-runtime = { group = "org.jetbrains.androidx.navigation", name = "navigation-runtime", version.ref = "androidx-navigation" }
 androidx-navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "androidx-navigation" }
 androidx-navigation-compose-wasm-js = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose-wasm-js", version.ref = "androidx-navigation" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }

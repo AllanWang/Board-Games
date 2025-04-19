@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,14 +25,16 @@ import androidx.compose.ui.unit.dp
 import boardgames.composeapp.generated.resources.Res
 import boardgames.composeapp.generated.resources.compose_multiplatform
 import org.jetbrains.compose.resources.painterResource
+import kotlin.time.Clock.System
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun App() {
   MaterialTheme {
 //    val navController = rememberNavController()
-//    LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) {
 //      window.bindToNavigation(navController)
-//    }
+    }
     val scope = rememberCoroutineScope()
     val state = remember { State(scope = scope) }
 
@@ -47,11 +51,16 @@ fun App() {
 
 private const val SOCKET_URL = "ws://localhost:8081"
 
+@OptIn(ExperimentalTime::class)
 @Composable
 fun App(state: State) {
-  Column(modifier = Modifier.fillMaxSize()) {
+  Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
     var showContent by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth().weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+      val now = remember {
+        System.now()
+      }
+      Text("Stamp $now")
       Button(onClick = { showContent = !showContent }) {
         Text("Click me!")
       }
