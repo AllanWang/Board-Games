@@ -13,6 +13,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +27,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import boardgames.composeapp.generated.resources.Res
 import boardgames.composeapp.generated.resources.compose_multiplatform
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import kotlin.time.Clock.System
 import kotlin.time.ExperimentalTime
@@ -52,8 +54,6 @@ fun App() {
   }
 }
 
-private const val SOCKET_URL = "ws://localhost:8081"
-
 @OptIn(ExperimentalTime::class)
 @Composable
 fun App(state: State) {
@@ -74,8 +74,9 @@ fun App(state: State) {
           Text("Compose: $greeting")
         }
       }
+      val scope = rememberCoroutineScope()
       Button(onClick = {
-//      client.get()
+        scope.launch { state.connect() }
       }) {
         Text("Connect")
       }

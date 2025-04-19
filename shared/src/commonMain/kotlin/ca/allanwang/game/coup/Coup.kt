@@ -13,6 +13,16 @@ data class Coup(
 )
 
 @Immutable
+data class PlayerState(
+  val id: PlayerId,
+  val name: String,
+  val others: List<String>,
+  val coins: Int,
+  val cards: List<Card>,
+
+)
+
+@Immutable
 data class Player(
   val id: PlayerId,
   val name: String,
