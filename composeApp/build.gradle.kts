@@ -34,13 +34,22 @@ kotlin {
     commonMain.dependencies {
       implementation(compose.runtime)
       implementation(compose.foundation)
+//      implementation(compose.animation)
       implementation(compose.material)
       implementation(compose.ui)
       implementation(compose.components.resources)
       implementation(compose.components.uiToolingPreview)
       implementation(libs.androidx.lifecycle.viewmodel)
       implementation(libs.androidx.lifecycle.runtime.compose)
+//      implementation(libs.androidx.navigation.compose)
       implementation(projects.shared)
+      implementation(libs.ktor.client.core)
+      implementation(libs.ktor.client.websockets)
+    }
+
+    wasmJsMain.dependencies {
+      implementation(libs.ktor.client.js)
+//      implementation(libs.androidx.navigation.compose.wasm.js)
     }
   }
 }
