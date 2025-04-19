@@ -1,33 +1,31 @@
 package ca.allanwang.game
 
 import ca.allanwang.game.coup.coupSockets
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.application.*
-import io.ktor.server.plugins.autohead.*
-import io.ktor.server.plugins.callid.*
-import io.ktor.server.plugins.calllogging.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.httpsredirect.*
-import io.ktor.server.plugins.requestvalidation.RequestValidation
-import io.ktor.server.plugins.requestvalidation.ValidationResult
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.server.sessions.*
-import io.ktor.server.websocket.*
-import io.ktor.websocket.*
-import java.time.Duration
+import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.routing.route
+import io.ktor.server.routing.routing
+import io.ktor.server.websocket.WebSockets
+import io.ktor.server.websocket.pingPeriod
+import io.ktor.server.websocket.timeout
+import io.ktor.server.websocket.webSocket
+import io.ktor.websocket.CloseReason
+import io.ktor.websocket.Frame
+import io.ktor.websocket.close
+import io.ktor.websocket.readText
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.protobuf.ProtoBuf
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.serialization.Serializable
-import org.slf4j.event.*
 
+@OptIn(ExperimentalSerializationApi::class)
 fun Application.configureSockets() {
   install(WebSockets) {
     pingPeriod = 15.seconds
     timeout = 15.seconds
     maxFrameSize = Long.MAX_VALUE
     masking = false
+    contentConverter = KotlinxWebsocketSerializationConverter(ProtoBuf)
   }
   routing {
     route("ws") {
