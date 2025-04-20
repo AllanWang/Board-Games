@@ -1,12 +1,9 @@
 package ca.allanwang.game.coup
 
 import androidx.compose.runtime.Immutable
+import ca.allanwang.game.lobby.PlayerId
 import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
-
-@JvmInline
-@Serializable
-value class PlayerId(val id: String)
 
 @Immutable
 @Serializable
@@ -24,7 +21,7 @@ data class PlayerState(
   val coins: Int,
   val cards: List<Card>,
 
-)
+  )
 
 @Immutable
 @Serializable
@@ -39,18 +36,3 @@ data class Player(
 enum class Card {
   Ambassador, Assassin, Captain, Contessa, Duke,
 }
-
-@Immutable
-@Serializable
-data class Lobby(
-  val code: String,
-  val players: List<LobbyPlayer>,
-)
-
-@Immutable
-@Serializable
-data class LobbyPlayer(
-  val id: PlayerId,
-  val name: String,
-  val ready: Boolean,
-)

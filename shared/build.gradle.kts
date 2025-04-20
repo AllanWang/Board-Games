@@ -32,6 +32,7 @@ kotlin {
     commonMain.dependencies {
       implementation(compose.runtime)
       implementation(libs.kotlinx.serialization.protobuf)
+      implementation(libs.kotlinx.coroutines.core)
       // put your Multiplatform dependencies here
     }
   }
