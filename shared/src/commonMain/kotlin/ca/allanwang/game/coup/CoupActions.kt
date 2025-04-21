@@ -1,0 +1,52 @@
+package ca.allanwang.game.coup
+
+import androidx.compose.runtime.Immutable
+import ca.allanwang.game.lobby.PlayerId
+import kotlinx.serialization.Serializable
+import ca.allanwang.game.coup.Card.Ambassador
+import ca.allanwang.game.coup.Card.Assassin
+import ca.allanwang.game.coup.Card.Captain
+import ca.allanwang.game.coup.Card.Contessa
+import ca.allanwang.game.coup.Card.Duke
+
+enum class CoupCardAction(
+  val actingCard: Card?, val targetsPlayer: Boolean, val blockingCards: List<Card>,
+) {
+  Income(actingCard = null, targetsPlayer = false, blockingCards = emptyList()),
+  ForeignAid(
+    actingCard = null,
+    targetsPlayer = false,
+    blockingCards = listOf(Duke)
+  ),
+  Tax(actingCard = Duke, targetsPlayer = false, blockingCards = emptyList()),
+  Assassinate(
+    actingCard = Assassin,
+    targetsPlayer = true,
+    blockingCards = listOf(Contessa)
+  ),
+  Coup(actingCard = null, targetsPlayer = true, blockingCards = emptyList()),
+  Steal(
+    actingCard = Captain,
+    targetsPlayer = true,
+    blockingCards = listOf(Ambassador, Captain)
+  ),
+  Exchange(actingCard = Ambassador, targetsPlayer = false, blockingCards = emptyList())
+}
+
+@Immutable
+@Serializable
+sealed interface CoupAction
+
+data class SelectAction(val action: CoupCardAction) : CoupAction
+
+data class SelectPlayer(val player: PlayerId) : CoupAction
+
+data object ContestAction : CoupAction
+
+data class BlockAction(val card: Card) : CoupAction
+
+data object AcceptAction : CoupAction
+
+data class SelectCards(val cards: List<Card>) : CoupAction
+
+sealed interface CoupActionClient

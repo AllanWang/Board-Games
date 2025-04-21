@@ -1,53 +1,39 @@
 package ca.allanwang.game.lobby
 
 import ca.allanwang.game.lobby.JoinFailure.DuplicateName
+import ca.allanwang.game.lobby.LobbyClient.Joined
+import ca.allanwang.game.lobby.LobbyClient.NotJoined
 import ca.allanwang.game.redux.StoreReducer
 
-fun Lobby.handle(id: PlayerId, message: LobbyMessageClient): LobbyMessageServer =
-  when (message) {
-    is Join -> {
-      if (message.name in players.map { it.name }) {
-        JoinFailure(reason = DuplicateName(name = message.name))
-      } else {
-        val lobby = copy(players = players + LobbyPlayer(id = id, name = message.name))
-        LobbyUpdate(lobby = lobby)
-      }
-    }
+object LobbyReducer : StoreReducer<Lobby, LobbyClient, LobbyAction, LobbyActionClient> {
 
-    is Start -> StartGame
-  }
-
-fun Lobby.reduce(message: LobbyMessageServer, onStart: (Lobby) -> Unit): Lobby =
-  when (message) {
-    is JoinFailure -> this
-    is LobbyUpdate -> message.lobby
-    StartGame -> {
-      onStart(this)
-      this
-    }
-  }
-
-object LobbyReducer : StoreReducer<Lobby, LobbyClient, LobbyMessage> {
-
-  override fun reduce(state: Lobby, playerId: PlayerId, action: LobbyMessage, dispatch: (LobbyMessage) -> Unit): Lobby =
+  override fun reduce(
+    state: Lobby, playerId: PlayerId, action: LobbyAction, dispatch: (LobbyAction) -> Unit,
+    clientDispatch: (LobbyActionClient) -> Unit,
+  ): Lobby =
     when (action) {
       is Join -> {
-        if (action.name in state.players.map { it.name }) {
-          JoinFailure(reason = DuplicateName(name = action.name))
+        if (state.players.any { it.name == action.name }) {
+          val failure = JoinFailure(reason = DuplicateName(name = action.name))
+          clientDispatch(failure)
           state
         } else {
           state.copy(players = state.players + LobbyPlayer(id = playerId, name = action.name))
         }
       }
 
-      Start -> TODO()
-      is JoinFailure -> TODO()
-      is LobbyUpdate -> TODO()
-      StartGame -> TODO()
+      Start -> {
+        // Not handled here
+        state
+      }
     }
 
   override fun playerState(state: Lobby, playerId: PlayerId): LobbyClient {
-    TODO("Not yet implemented")
+    return if (state.players.any { it.id == playerId }) {
+      Joined(code = state.code, self = playerId, players = state.players)
+    } else {
+      NotJoined
+    }
   }
 
 }

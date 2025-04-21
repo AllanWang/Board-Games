@@ -14,7 +14,7 @@ typealias PlayerState<S, T> = (S, PlayerId) -> T
 
 typealias Reducer<S, A> = (S, A) -> S
 
-abstract class Store<S, P, A>(
+abstract class Store2<S, P, A>(
   initialState: S,
   private val playerStateReducer: PlayerState<S, P>,
   private val reducer: Reducer<S, A>,
@@ -37,8 +37,10 @@ abstract class Store<S, P, A>(
   }.distinctUntilChanged()
 }
 
-interface StoreReducer<S, P, A> {
-  fun reduce(state: S,playerId: PlayerId, action: A, dispatch: (A) -> Unit): S
+interface StoreReducer<S, P, A, C> {
+  fun reduce(state: S,playerId: PlayerId, action: A, dispatch: (A) -> Unit, clientDispatch: (C) -> Unit): S
 
   fun playerState(state: S, playerId: PlayerId): P
 }
+
+fun <T> T.thenIf(condition: T.() -> Boolean, action: T.() -> T) = if (condition()) action() else this

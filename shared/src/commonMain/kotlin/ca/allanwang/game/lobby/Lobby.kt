@@ -20,20 +20,25 @@ value class LobbyCode(val code: String)
 @Serializable
 data class Lobby(val code: LobbyCode, val players: List<LobbyPlayer>)
 
+interface ILobbyPlayer {
+  val id: PlayerId
+  val name: PlayerName
+  val active: Boolean
+}
+
 @Immutable
 @Serializable
 data class LobbyPlayer(
-  val id: PlayerId,
-  val name: PlayerName,
-)
+ override val id: PlayerId,
+ override   val name: PlayerName,
+ override  val active: Boolean,
+): ILobbyPlayer
 
 @Immutable
 @Serializable
 sealed interface LobbyClient {
 
   data object NotJoined : LobbyClient
-
-  data class NotJoinedBadName(val name: PlayerName): LobbyClient
 
   data class Joined(val code: LobbyCode, val self: PlayerId, val players: List<LobbyPlayer>): LobbyClient
 
