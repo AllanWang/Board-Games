@@ -38,8 +38,10 @@ data class LobbyPlayer(
 @Serializable
 sealed interface LobbyClient {
 
+  @Serializable
   data object NotJoined : LobbyClient
 
+  @Serializable
   data class Joined(val code: LobbyCode, val self: PlayerId, val players: List<LobbyPlayer>): LobbyClient
 
 }

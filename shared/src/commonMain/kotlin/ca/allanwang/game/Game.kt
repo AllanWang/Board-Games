@@ -23,10 +23,12 @@ sealed interface Game
 data object GameEmpty : Game
 
 @Serializable
-data class GameLobby(val game: Lobby) : Game
+@JvmInline
+value class GameLobby(val game: Lobby) : Game
 
 @Serializable
-data class GameCoup(val game: Coup) : Game
+@JvmInline
+value class GameCoup(val game: Coup) : Game
 
 @Immutable
 @Serializable
@@ -36,22 +38,22 @@ sealed interface GameClient
 data object GameClientEmpty : GameClient
 
 @Serializable
-data class GameClientLobby(val client: LobbyClient) : GameClient
+@JvmInline
+value class GameClientLobby(val client: LobbyClient) : GameClient
 
 @Serializable
-data class GameClientCoup(val client: CoupClient) : GameClient
+@JvmInline
+value class GameClientCoup(val client: CoupClient) : GameClient
 
 
 @Immutable
 @Serializable
 sealed interface GameAction
 
-@Immutable
 @Serializable
 @JvmInline
 value class GameActionLobby(val action: LobbyAction) : GameAction
 
-@Immutable
 @Serializable
 @JvmInline
 value class GameActionCoup(val action: CoupAction) : GameAction
