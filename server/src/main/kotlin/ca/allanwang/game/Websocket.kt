@@ -13,6 +13,7 @@ import io.ktor.server.websocket.receiveDeserialized
 import io.ktor.server.websocket.sendSerialized
 import io.ktor.server.websocket.timeout
 import io.ktor.server.websocket.webSocket
+import io.ktor.util.reflect.typeInfo
 import io.ktor.websocket.CloseReason
 import io.ktor.websocket.Frame
 import io.ktor.websocket.close
@@ -35,8 +36,9 @@ fun Application.configureSockets() {
   routing {
     route("ws") {
       webSocket("game") {
-        sendSerialized(GameClientEmpty)
-//        sendSerialized(game.state)
+        // TypeInfo is required to provide sealed type info
+        sendSerialized(GameClientEmpty, typeInfo<GameClient>())
+//        sendSerialized(game.state, typeInfo<GameClient>())
         while (true) {
           try {
             val action = receiveDeserialized<GameAction>()
@@ -46,13 +48,13 @@ fun Application.configureSockets() {
           }
         }
       }
-        webSocket("test") {
-          for (frame in incoming) {
-            if (frame is Frame.Text) {
-              val text = frame.readText()
-              outgoing.send(Frame.Text("YOU SAID: $text"))
-              if (text.equals("bye", ignoreCase = true)) {
-                close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
+      webSocket("test") {
+        for (frame in incoming) {
+          if (frame is Frame.Text) {
+            val text = frame.readText()
+            outgoing.send(Frame.Text("YOU SAID: $text"))
+            if (text.equals("bye", ignoreCase = true)) {
+              close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
             }
           }
         }

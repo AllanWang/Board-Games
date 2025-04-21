@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -87,13 +88,15 @@ fun App(state: State) {
 
 @Composable
 fun Logs(logs: List<String>, modifier: Modifier = Modifier) {
-  LazyColumn(
-    modifier = modifier, contentPadding = PaddingValues(
-      16.dp
-    )
-  ) {
-    items(logs) { line ->
-      Text(text = line)
+  SelectionContainer {
+    LazyColumn(
+      modifier = modifier, contentPadding = PaddingValues(
+        16.dp
+      )
+    ) {
+      items(logs) { line ->
+        Text(text = line)
+      }
     }
   }
 }

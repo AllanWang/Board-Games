@@ -35,9 +35,10 @@ kotlin {
       implementation(libs.kotlinx.coroutines.core)
       // put your Multiplatform dependencies here
     }
+
+    commonTest.dependencies {
+      implementation(libs.kotlin.test)
+    }
   }
-}
-dependencies {
-  testImplementation(libs.junit.jupiter)
 }
 

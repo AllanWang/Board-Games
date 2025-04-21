@@ -8,7 +8,6 @@ import ca.allanwang.game.coup.CoupReducer
 import ca.allanwang.game.lobby.Lobby
 import ca.allanwang.game.lobby.LobbyAction
 import ca.allanwang.game.lobby.LobbyClient
-import ca.allanwang.game.lobby.LobbyCode
 import ca.allanwang.game.lobby.LobbyReducer
 import ca.allanwang.game.lobby.PlayerId
 import ca.allanwang.game.redux.Store
@@ -17,32 +16,30 @@ import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 
 @Immutable
+@Serializable
 sealed interface Game
 
 @Serializable
 data object GameEmpty : Game
 
 @Serializable
-@JvmInline
-value class GameLobby(val game: Lobby) : Game
+data class GameLobby(val game: Lobby) : Game
 
 @Serializable
-@JvmInline
-value class GameCoup(val game: Coup) : Game
+data class GameCoup(val game: Coup) : Game
 
 @Immutable
+@Serializable
 sealed interface GameClient
 
 @Serializable
-data object GameClientEmpty: GameClient
+data object GameClientEmpty : GameClient
 
 @Serializable
-@JvmInline
-value class GameClientLobby(val client: LobbyClient) : GameClient
+data class GameClientLobby(val client: LobbyClient) : GameClient
 
 @Serializable
-@JvmInline
-value class GameClientCoup(val client: CoupClient) : GameClient
+data class GameClientCoup(val client: CoupClient) : GameClient
 
 
 @Immutable
