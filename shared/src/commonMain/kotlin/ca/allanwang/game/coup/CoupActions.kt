@@ -1,13 +1,13 @@
 package ca.allanwang.game.coup
 
 import androidx.compose.runtime.Immutable
-import ca.allanwang.game.lobby.PlayerId
-import kotlinx.serialization.Serializable
 import ca.allanwang.game.coup.Card.Ambassador
 import ca.allanwang.game.coup.Card.Assassin
 import ca.allanwang.game.coup.Card.Captain
 import ca.allanwang.game.coup.Card.Contessa
 import ca.allanwang.game.coup.Card.Duke
+import ca.allanwang.game.lobby.PlayerId
+import kotlinx.serialization.Serializable
 
 enum class CoupCardAction(
   val actingCard: Card?, val targetsPlayer: Boolean, val blockingCards: List<Card>,
@@ -46,6 +46,8 @@ data object ContestAction : CoupAction
 data class BlockAction(val card: Card) : CoupAction
 
 data object AcceptAction : CoupAction
+
+data class LoseCard(val card: Card): CoupAction
 
 data class SelectCards(val cards: List<Card>) : CoupAction
 

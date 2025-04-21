@@ -1,5 +1,6 @@
 package ca.allanwang.game.redux
 
+import ca.allanwang.game.Game
 import ca.allanwang.game.lobby.PlayerId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,9 +13,9 @@ import kotlinx.coroutines.flow.update
 
 typealias PlayerState<S, T> = (S, PlayerId) -> T
 
-typealias Reducer<S, A> = (S, A) -> S
+typealias Reducer<S, A> = (S, PlayerId, A) -> S
 
-abstract class Store2<S, P, A>(
+abstract class Store<S, P, A>(
   initialState: S,
   private val playerStateReducer: PlayerState<S, P>,
   private val reducer: Reducer<S, A>,
@@ -26,9 +27,9 @@ abstract class Store2<S, P, A>(
 
   val state: S get() = stateFlow.value
 
-  fun dispatch(action: A) {
+  fun dispatch(playerId: PlayerId, action: A) {
     stateFlow.update {
-      reducer(it, action)
+      reducer(it, playerId, action)
     }
   }
 
@@ -37,8 +38,8 @@ abstract class Store2<S, P, A>(
   }.distinctUntilChanged()
 }
 
-interface StoreReducer<S, P, A, C> {
-  fun reduce(state: S,playerId: PlayerId, action: A, dispatch: (A) -> Unit, clientDispatch: (C) -> Unit): S
+interface StoreReducer<S, P, A> {
+  fun reduce(state: S,playerId: PlayerId, action: A, ): S
 
   fun playerState(state: S, playerId: PlayerId): P
 }

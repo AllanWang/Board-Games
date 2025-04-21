@@ -4,21 +4,16 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import ca.allanwang.game.coup.PlayerState
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.js.Js
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.receiveDeserialized
 import io.ktor.client.plugins.websocket.webSocket
-import io.ktor.client.plugins.websocket.webSocketSession
 import io.ktor.http.HttpMethod
 import io.ktor.serialization.WebsocketDeserializeException
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.protobuf.protobuf
-import io.ktor.websocket.Frame
-import io.ktor.websocket.readText
-import io.ktor.websocket.send
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,12 +29,10 @@ class State(private val scope: CoroutineScope) {
   private val client: HttpClient =
     HttpClient(Js) {
       install(ContentNegotiation) {
-        protobuf(ProtoBuf {
-          encodeDefaults = true
-        })
+        protobuf(ProtobufSerializer)
       }
       install(WebSockets) {
-        contentConverter = KotlinxWebsocketSerializationConverter(ProtoBuf)
+        contentConverter = KotlinxWebsocketSerializationConverter(ProtobufSerializer)
       }
     }
 
@@ -47,22 +40,27 @@ class State(private val scope: CoroutineScope) {
     logs += text
   }
 
-  private val _flow: MutableStateFlow<PlayerState?> = MutableStateFlow(null)
-  val flow: StateFlow<PlayerState?> get() = _flow
+  private val _flow: MutableStateFlow<GameClient> = MutableStateFlow(GameClientEmpty)
+  val flow: StateFlow<GameClient> get() = _flow
 
   suspend fun connect() {
     client.webSocket(
       method = HttpMethod.Get,
       host = "localhost",
       port = SERVER_PORT,
-      path = "/ws/coup"
+      path = "/ws/game"
     ) {
+      addLog("Connect")
       while (true) {
         try {
-          val playerState = receiveDeserialized<PlayerState>()
-          addLog(playerState.toString())
+          val gameClient = receiveDeserialized<GameClient>()
+          _flow.emit(gameClient)
+          addLog(gameClient.toString())
         } catch (e: WebsocketDeserializeException) {
           addLog("Failed to deserialize")
+        } catch (e: Exception) {
+          e.printStackTrace()
+          addLog(e.message ?: "error")
         }
       }
     }

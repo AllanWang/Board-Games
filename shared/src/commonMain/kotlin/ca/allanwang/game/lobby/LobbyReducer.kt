@@ -5,20 +5,19 @@ import ca.allanwang.game.lobby.LobbyClient.Joined
 import ca.allanwang.game.lobby.LobbyClient.NotJoined
 import ca.allanwang.game.redux.StoreReducer
 
-object LobbyReducer : StoreReducer<Lobby, LobbyClient, LobbyAction, LobbyActionClient> {
+object LobbyReducer : StoreReducer<Lobby, LobbyClient, LobbyAction> {
 
   override fun reduce(
-    state: Lobby, playerId: PlayerId, action: LobbyAction, dispatch: (LobbyAction) -> Unit,
-    clientDispatch: (LobbyActionClient) -> Unit,
+    state: Lobby, playerId: PlayerId, action: LobbyAction
   ): Lobby =
     when (action) {
       is Join -> {
         if (state.players.any { it.name == action.name }) {
           val failure = JoinFailure(reason = DuplicateName(name = action.name))
-          clientDispatch(failure)
+//          clientDispatch(failure)
           state
         } else {
-          state.copy(players = state.players + LobbyPlayer(id = playerId, name = action.name))
+          state.copy(players = state.players + LobbyPlayer(id = playerId, name = action.name, active = true))
         }
       }
 

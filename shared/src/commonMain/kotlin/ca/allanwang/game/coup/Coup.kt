@@ -16,6 +16,7 @@ data class Coup(
   val code: LobbyCode,
   val players: List<Player>,
   val deck: List<Card>,
+  val discard: List<Card>,
   val playerAction: CoupPlayerAction,
 ) {
 
@@ -34,7 +35,9 @@ data class Coup(
   sealed interface CoupPlayerAction {
     data object Waiting : CoupPlayerAction
 
-    data class Selecting(val options: List<CoupCardAction>) : CoupPlayerAction
+    data class GameEnded(val winner: PlayerId): CoupPlayerAction
+
+    data class SelectingAction(val options: List<CoupCardAction>) : CoupPlayerAction
 
     data class SelectingPlayer(val action: CoupCardAction, val options: List<PlayerId>, val requireCoup: Boolean) :
       CoupPlayerAction

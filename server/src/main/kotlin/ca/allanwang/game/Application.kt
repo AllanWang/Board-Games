@@ -25,9 +25,7 @@ fun main() {
 @OptIn(ExperimentalSerializationApi::class)
 fun Application.module() {
   install(ContentNegotiation) {
-    protobuf(ProtoBuf {
-      encodeDefaults = true
-    })
+    protobuf(ProtobufSerializer)
   }
   configureMonitoring()
   configureRouting()

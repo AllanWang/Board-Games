@@ -5,11 +5,13 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.callid.CallId
 import io.ktor.server.plugins.callid.callIdMdc
+import io.ktor.server.plugins.callid.generate
 import io.ktor.server.plugins.calllogging.CallLogging
 
 fun Application.configureMonitoring() {
   install(CallId) {
     header(HttpHeaders.XRequestId)
+    generate(5, "abcde12345")
     verify { callId: String ->
       callId.isNotEmpty()
     }
