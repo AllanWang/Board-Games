@@ -5,6 +5,7 @@ import io.ktor.serialization.WebsocketDeserializeException
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
+import io.ktor.server.application.log
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
@@ -13,16 +14,18 @@ import io.ktor.server.websocket.receiveDeserialized
 import io.ktor.server.websocket.sendSerialized
 import io.ktor.server.websocket.timeout
 import io.ktor.server.websocket.webSocket
+import io.ktor.util.logging.error
 import io.ktor.util.reflect.typeInfo
 import io.ktor.websocket.CloseReason
 import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import io.ktor.websocket.readText
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.protobuf.ProtoBuf
 import kotlin.time.Duration.Companion.seconds
-
-val game = GameStore()
 
 @OptIn(ExperimentalSerializationApi::class)
 fun Application.configureSockets() {
@@ -33,20 +36,35 @@ fun Application.configureSockets() {
     masking = false
     contentConverter = KotlinxWebsocketSerializationConverter(ProtobufSerializer)
   }
+  val game = GameStore()
   routing {
     route("ws") {
       webSocket("game") {
-        // TypeInfo is required to provide sealed type info
-        sendSerialized(GameClientEmpty, typeInfo<GameClient>())
-//        sendSerialized(game.state, typeInfo<GameClient>())
-        while (true) {
-          try {
-            val action = receiveDeserialized<GameAction>()
-            game.dispatch(PlayerId("test"), action)
-          } catch (e: WebsocketDeserializeException) {
-            e.printStackTrace()
+        val playerId = PlayerId("test")
+        log.info("Started for player {}", playerId)
+        val job = Job()
+        launch(job) {
+          while (isActive) {
+            try {
+              val action = receiveDeserialized<GameAction>()
+              game.dispatch(playerId, action)
+            } catch (e: ClosedReceiveChannelException) {
+              job.cancel()
+              break
+            } catch (e: WebsocketDeserializeException) {
+              log.error(e)
+            }
           }
         }
+        launch(job) {
+          game.observe(playerId).collect { state ->
+            log.trace("Received for {}: {}", playerId, state)
+            // Added explicit type info for serialization
+            sendSerialized(state, typeInfo<GameClient>())
+          }
+        }
+        job.join()
+        log.info("Socket closed for {}", playerId)
       }
       webSocket("test") {
         for (frame in incoming) {

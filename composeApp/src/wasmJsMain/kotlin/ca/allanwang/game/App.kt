@@ -4,8 +4,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -82,19 +84,26 @@ fun App(state: State) {
         Text("Connect")
       }
     }
-    Logs(modifier = Modifier.fillMaxWidth().weight(1f), logs = state.logs)
+    Logs(modifier = Modifier.fillMaxWidth().weight(1f), state = state)
   }
 }
 
 @Composable
-fun Logs(logs: List<String>, modifier: Modifier = Modifier) {
+fun Logs(state: State, modifier: Modifier = Modifier) {
+  val game by state.flow.collectAsState()
   SelectionContainer {
     LazyColumn(
       modifier = modifier, contentPadding = PaddingValues(
         16.dp
       )
     ) {
-      items(logs) { line ->
+      item {
+        Text(text = game.toString())
+      }
+      item {
+        Spacer(modifier = Modifier.height(24.dp))
+      }
+      items(state.logs) { line ->
         Text(text = line)
       }
     }

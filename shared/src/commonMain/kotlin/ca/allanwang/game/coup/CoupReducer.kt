@@ -11,6 +11,7 @@ import ca.allanwang.game.coup.Coup.CoupPlayerAction.SelectingPlayer
 import ca.allanwang.game.coup.Coup.CoupPlayerAction.Validating
 import ca.allanwang.game.coup.Coup.CoupPlayerAction.ValidatingBlock
 import ca.allanwang.game.coup.Coup.PendingBlockAction
+import ca.allanwang.game.coup.CoupClient.GameInfo.PlayerInfo
 import ca.allanwang.game.lobby.PlayerId
 import ca.allanwang.game.redux.StoreReducer
 
@@ -174,7 +175,14 @@ object CoupReducer : StoreReducer<Coup, CoupClient, CoupAction> {
 
 
   override fun playerState(state: Coup, playerId: PlayerId): CoupClient {
-    TODO("Not yet implemented")
+    // temporarily always return state of active player
+    return CoupClient(
+      self = playerId,
+      active = state.active,
+      players = state.players.map { it.lobbyPlayer },
+      gameInfo = PlayerInfo(state.players[state.active].gameInfo),
+      action = state.playerAction
+    )
   }
 
 

@@ -14,9 +14,12 @@ import io.ktor.http.HttpMethod
 import io.ktor.serialization.WebsocketDeserializeException
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.protobuf.protobuf
+import io.ktor.websocket.close
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
 
@@ -51,13 +54,15 @@ class State(private val scope: CoroutineScope) {
       path = "/ws/game"
     ) {
       addLog("Connect")
-      while (true) {
+      while (isActive) {
         try {
           val gameClient = receiveDeserialized<GameClient>()
           _flow.emit(gameClient)
-          addLog(gameClient.toString())
+        } catch (e: ClosedReceiveChannelException) {
+          addLog("Channel closed")
+          break
         } catch (e: WebsocketDeserializeException) {
-          addLog("Failed to deserialize")
+          addLog("Failed to deserialize ${e.message}")
         } catch (e: Exception) {
           e.printStackTrace()
           addLog(e.message ?: "error")
