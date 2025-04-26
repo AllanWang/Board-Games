@@ -7,18 +7,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface LobbyAction
 
-data class Join(val name: PlayerName) : LobbyAction
-
-data object Start : LobbyAction
-
-@Immutable
 @Serializable
-sealed interface LobbyActionClient
+data class Join(val id: PlayerId) : LobbyAction
 
-data class JoinFailure(val reason: JoinFailure) : LobbyActionClient {
-  sealed interface JoinFailure
-
-  data class DuplicateName(val name: PlayerName) : JoinFailure
-}
-
-
+@Serializable
+data object Start : LobbyAction

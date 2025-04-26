@@ -10,10 +10,6 @@ value class PlayerId(val id: String)
 
 @JvmInline
 @Serializable
-value class PlayerName(val name: String)
-
-@JvmInline
-@Serializable
 value class LobbyCode(val code: String)
 
 @Immutable
@@ -22,7 +18,6 @@ data class Lobby(val code: LobbyCode, val players: List<LobbyPlayer>)
 
 interface ILobbyPlayer {
   val id: PlayerId
-  val name: PlayerName
   val active: Boolean
 }
 
@@ -30,7 +25,6 @@ interface ILobbyPlayer {
 @Serializable
 data class LobbyPlayer(
   override val id: PlayerId,
-  override val name: PlayerName,
   override val active: Boolean,
 ) : ILobbyPlayer
 

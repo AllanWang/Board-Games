@@ -1,5 +1,7 @@
 package ca.allanwang.game
 
+import ca.allanwang.game.lobby.Join
+import ca.allanwang.game.lobby.LobbyAction
 import ca.allanwang.game.lobby.PlayerId
 import io.ktor.serialization.WebsocketDeserializeException
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
@@ -22,6 +24,7 @@ import io.ktor.websocket.close
 import io.ktor.websocket.readText
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -40,13 +43,28 @@ fun Application.configureSockets() {
   routing {
     route("ws") {
       webSocket("game") {
-        val playerId = PlayerId("test")
-        log.info("Started for player {}", playerId)
+        log.info("Started websocket")
         val job = Job()
+
+        var playerId  = PlayerId("__uninitialized__")
+
+        // Get valid id first
+        while (isActive) {
+          val action = receiveDeserialized<GameAction>()
+          val newPlayerId = ((action as? GameActionLobby)?.action as? Join)?.id
+          if (newPlayerId != null) {
+            log.trace("Received id $newPlayerId")
+            playerId = newPlayerId
+            game.dispatch(playerId, action)
+            break
+          }
+        }
+
         launch(job) {
           while (isActive) {
             try {
               val action = receiveDeserialized<GameAction>()
+              log.trace("Received for {}: {}", playerId, action)
               game.dispatch(playerId, action)
             } catch (e: ClosedReceiveChannelException) {
               job.cancel()
@@ -58,7 +76,7 @@ fun Application.configureSockets() {
         }
         launch(job) {
           game.observe(playerId).collect { state ->
-            log.trace("Received for {}: {}", playerId, state)
+            log.trace("Sending for {}: {}", playerId, state)
             // Added explicit type info for serialization
             sendSerialized(state, typeInfo<GameClient>())
           }

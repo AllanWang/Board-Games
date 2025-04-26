@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -39,7 +40,7 @@ abstract class Store<S, P, A>(
 }
 
 interface StoreReducer<S, P, A> {
-  fun reduce(state: S,playerId: PlayerId, action: A, ): S
+  fun reduce(state: S, playerId: PlayerId, action: A): S
 
   fun playerState(state: S, playerId: PlayerId): P
 }

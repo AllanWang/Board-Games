@@ -9,6 +9,7 @@ import ca.allanwang.game.coup.CoupClient
 import ca.allanwang.game.coup.CoupReducer
 import ca.allanwang.game.coup.GamePlayerInfo
 import ca.allanwang.game.coup.Player
+import ca.allanwang.game.lobby.Join
 import ca.allanwang.game.lobby.Lobby
 import ca.allanwang.game.lobby.LobbyAction
 import ca.allanwang.game.lobby.LobbyClient
@@ -16,7 +17,6 @@ import ca.allanwang.game.lobby.LobbyCode
 import ca.allanwang.game.lobby.LobbyPlayer
 import ca.allanwang.game.lobby.LobbyReducer
 import ca.allanwang.game.lobby.PlayerId
-import ca.allanwang.game.lobby.PlayerName
 import ca.allanwang.game.redux.Store
 import ca.allanwang.game.redux.StoreReducer
 import kotlinx.serialization.Serializable
@@ -66,23 +66,7 @@ value class GameActionLobby(val action: LobbyAction) : GameAction
 value class GameActionCoup(val action: CoupAction) : GameAction
 
 class GameStore : Store<Game, GameClient, GameAction>(
-  initialState = GameCoup(
-    Coup(
-      active = 0,
-      code = LobbyCode("test"),
-      players = listOf(
-        Player(
-          lobbyPlayer = LobbyPlayer(
-            id = PlayerId("test"), name = PlayerName("TestName"), active = true,
-          ), gameInfo = GamePlayerInfo(coins = 2, cards = listOf(Assassin))
-        )
-      ),
-      deck = Card.entries.toList(),
-      discard = emptyList(),
-      playerAction = Coup.CoupPlayerAction.Waiting
-    )
-  ),
-//  initialState = GameEmpty,
+  initialState = GameEmpty,
   playerStateReducer = GameReducer::playerState,
   reducer = GameReducer::reduce
 ) {
@@ -94,7 +78,7 @@ class GameStore : Store<Game, GameClient, GameAction>(
         players = listOf(
           Player(
             lobbyPlayer = LobbyPlayer(
-              id = PlayerId("test"), name = PlayerName("TestName"), active = true,
+              id = PlayerId("test"), active = true,
             ), gameInfo = GamePlayerInfo(coins = 2, cards = listOf(Assassin))
           )
         ),
@@ -115,6 +99,9 @@ object GameReducer : StoreReducer<Game, GameClient, GameAction> {
   ): Game {
 
     return when {
+      state is GameEmpty && action is GameActionLobby && action.action is Join ->
+        GameLobby(Lobby(code = LobbyCode("test"), players = listOf(LobbyPlayer(id = action.action.id, active = true))))
+
       state is GameLobby && action is GameActionLobby ->
         GameLobby(LobbyReducer.reduce(state.game, playerId, action.action))
 

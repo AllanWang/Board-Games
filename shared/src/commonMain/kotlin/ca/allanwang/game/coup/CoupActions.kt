@@ -37,16 +37,23 @@ enum class CoupCardAction(
 @Serializable
 sealed interface CoupAction
 
+@Serializable
 data class SelectAction(val action: CoupCardAction) : CoupAction
 
+@Serializable
 data class SelectPlayer(val player: PlayerId) : CoupAction
 
+@Serializable
 data object ContestAction : CoupAction
 
+@Serializable
 data class BlockAction(val card: Card) : CoupAction
 
+@Serializable
 data object AcceptAction : CoupAction
 
+@Serializable
 data class LoseCard(val card: Card): CoupAction
 
+@Serializable
 data class SelectCards(val cards: List<Card>) : CoupAction

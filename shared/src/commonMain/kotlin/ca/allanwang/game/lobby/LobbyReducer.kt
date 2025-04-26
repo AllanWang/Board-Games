@@ -1,6 +1,5 @@
 package ca.allanwang.game.lobby
 
-import ca.allanwang.game.lobby.JoinFailure.DuplicateName
 import ca.allanwang.game.lobby.LobbyClient.Joined
 import ca.allanwang.game.lobby.LobbyClient.NotJoined
 import ca.allanwang.game.redux.StoreReducer
@@ -12,12 +11,12 @@ object LobbyReducer : StoreReducer<Lobby, LobbyClient, LobbyAction> {
   ): Lobby =
     when (action) {
       is Join -> {
-        if (state.players.any { it.name == action.name }) {
-          val failure = JoinFailure(reason = DuplicateName(name = action.name))
-//          clientDispatch(failure)
+        if (state.players.any { it.id == action.id }) {
+          // Technically an error to create with the same id, but we will allow two computers to behave like one user
+          // This is a no op
           state
         } else {
-          state.copy(players = state.players + LobbyPlayer(id = playerId, name = action.name, active = true))
+          state.copy(players = state.players + LobbyPlayer(id = action.id, active = true))
         }
       }
 
