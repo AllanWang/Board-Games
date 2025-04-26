@@ -30,6 +30,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import boardgames.composeapp.generated.resources.Res
 import boardgames.composeapp.generated.resources.compose_multiplatform
+import ca.allanwang.game.coup.Coup.CoupPlayerAction
+import ca.allanwang.game.coup.CoupClient
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import kotlin.time.Clock.System
@@ -86,6 +88,11 @@ fun App(state: State) {
     }
     Logs(modifier = Modifier.fillMaxWidth().weight(1f), state = state)
   }
+}
+
+@Composable
+fun Coup(state: CoupClient, send: (CoupPlayerAction) -> Unit) {
+
 }
 
 @Composable

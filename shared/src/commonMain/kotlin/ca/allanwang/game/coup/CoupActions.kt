@@ -50,5 +50,3 @@ data object AcceptAction : CoupAction
 data class LoseCard(val card: Card): CoupAction
 
 data class SelectCards(val cards: List<Card>) : CoupAction
-
-sealed interface CoupActionClient
