@@ -9,7 +9,6 @@ import ca.allanwang.game.coup.CoupClient
 import ca.allanwang.game.coup.CoupReducer
 import ca.allanwang.game.coup.GamePlayerInfo
 import ca.allanwang.game.coup.Player
-import ca.allanwang.game.lobby.Join
 import ca.allanwang.game.lobby.Lobby
 import ca.allanwang.game.lobby.LobbyAction
 import ca.allanwang.game.lobby.LobbyClient
@@ -99,7 +98,7 @@ object GameReducer : StoreReducer<Game, GameClient, GameAction> {
   ): Game {
 
     return when {
-      state is GameEmpty && action is GameActionLobby && action.action is Join ->
+      state is GameEmpty && action is GameActionLobby && action.action is LobbyAction.Join ->
         GameLobby(Lobby(code = LobbyCode("test"), players = listOf(LobbyPlayer(id = action.action.id, active = true))))
 
       state is GameLobby && action is GameActionLobby ->

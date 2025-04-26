@@ -1,6 +1,5 @@
 package ca.allanwang.game
 
-import ca.allanwang.game.lobby.Join
 import ca.allanwang.game.lobby.LobbyAction
 import ca.allanwang.game.lobby.PlayerId
 import io.ktor.serialization.WebsocketDeserializeException
@@ -51,7 +50,7 @@ fun Application.configureSockets() {
         // Get valid id first
         while (isActive) {
           val action = receiveDeserialized<GameAction>()
-          val newPlayerId = ((action as? GameActionLobby)?.action as? Join)?.id
+          val newPlayerId = ((action as? GameActionLobby)?.action as? LobbyAction.Join)?.id
           if (newPlayerId != null) {
             log.trace("Received id $newPlayerId")
             playerId = newPlayerId

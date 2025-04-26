@@ -89,7 +89,7 @@ class State(private val scope: CoroutineScope) {
           }
         }
         launch(job + exceptionHandler) {
-          sendSerialized(GameActionLobby(Join(id = id)), typeInfo<GameAction>())
+          sendSerialized(GameActionLobby(LobbyAction.Join(id = id)), typeInfo<GameAction>())
           sendFlow.collect { action: GameAction ->
             sendSerialized(action, typeInfo<GameAction>())
           }

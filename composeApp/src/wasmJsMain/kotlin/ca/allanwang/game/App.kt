@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -44,7 +45,9 @@ fun App() {
 fun App(state: State) {
   Column(modifier = Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(32.dp)) {
     Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
-      Game(state = state)
+      Box(modifier = Modifier.align(Alignment.Center)) {
+        Game(state = state)
+      }
     }
     SelectionContainer(modifier = Modifier.fillMaxWidth()) {
       Text(text = state.state.toString(), minLines = 3)

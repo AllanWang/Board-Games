@@ -5,10 +5,12 @@ import kotlinx.serialization.Serializable
 
 @Immutable
 @Serializable
-sealed interface LobbyAction
+sealed interface LobbyAction {
 
-@Serializable
-data class Join(val id: PlayerId) : LobbyAction
+  @Serializable
+  data class Join(val id: PlayerId) : LobbyAction
 
-@Serializable
-data object Start : LobbyAction
+  @Serializable
+  data object Start : LobbyAction
+
+}

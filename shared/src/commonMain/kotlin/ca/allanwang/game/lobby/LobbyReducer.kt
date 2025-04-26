@@ -10,7 +10,7 @@ object LobbyReducer : StoreReducer<Lobby, LobbyClient, LobbyAction> {
     state: Lobby, playerId: PlayerId, action: LobbyAction
   ): Lobby =
     when (action) {
-      is Join -> {
+      is LobbyAction.Join -> {
         if (state.players.any { it.id == action.id }) {
           // Technically an error to create with the same id, but we will allow two computers to behave like one user
           // This is a no op
@@ -20,7 +20,7 @@ object LobbyReducer : StoreReducer<Lobby, LobbyClient, LobbyAction> {
         }
       }
 
-      Start -> {
+      LobbyAction.Start -> {
         // Not handled here
         state
       }

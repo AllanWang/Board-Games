@@ -30,7 +30,7 @@ object CoupReducer : StoreReducer<Coup, CoupClient, CoupAction> {
       return state
     }
     return when (action) {
-      is SelectAction -> {
+      is CoupAction.SelectAction -> {
         if (!isCurrentActivePlayer) return state
         if (playerAction !is SelectingAction) return state
         val cardAction = action.action
@@ -38,7 +38,7 @@ object CoupReducer : StoreReducer<Coup, CoupClient, CoupAction> {
         state.selectAction(action = cardAction, recipient = null)
       }
 
-      is SelectPlayer -> {
+      is CoupAction.SelectPlayer -> {
         if (!isCurrentActivePlayer) return state
         if (playerAction !is SelectingPlayer) return state
         if (action.player == playerId) return state
@@ -46,7 +46,7 @@ object CoupReducer : StoreReducer<Coup, CoupClient, CoupAction> {
         state.selectAction(action = playerAction.action, recipient = recipient.id)
       }
 
-      is AcceptAction -> {
+      is CoupAction.AcceptAction -> {
         when (playerAction) {
           is Validating -> {
             val newAccepted = playerAction.accepted + player.id
@@ -69,7 +69,7 @@ object CoupReducer : StoreReducer<Coup, CoupClient, CoupAction> {
         }
       }
 
-      is ContestAction -> {
+      is CoupAction.ContestAction -> {
         val contesterId = playerId
         when (playerAction) {
           is Validating -> {
@@ -134,7 +134,7 @@ object CoupReducer : StoreReducer<Coup, CoupClient, CoupAction> {
         }
       }
 
-      is BlockAction -> {
+      is CoupAction.BlockAction -> {
         if (playerAction !is Validating) return state
         if (action.card !in playerAction.pendingAction.action.blockingCards)  return state
         if (playerId == playerAction.pendingAction.requester)  return state
@@ -148,7 +148,7 @@ object CoupReducer : StoreReducer<Coup, CoupClient, CoupAction> {
         state.copy(playerAction = newPlayerAction)
       }
 
-      is LoseCard -> {
+      is CoupAction.LoseCard -> {
         if (playerAction !is RequestingLoseCard)  return state
         if (playerId != playerAction.playerId)  return state
         if (!state.checkPlayerCard(playerId, action.card))  return state
@@ -158,7 +158,7 @@ object CoupReducer : StoreReducer<Coup, CoupClient, CoupAction> {
         }.postLoseCard(playerAction.reason)
       }
 
-      is SelectCards -> {
+      is CoupAction.SelectCards -> {
         if (playerAction !is SelectingCard)  return state
         if (playerAction.playerId != playerId)  return state
         if (action.cards.size != playerAction.count)  return state
