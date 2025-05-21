@@ -94,7 +94,6 @@ internal fun Coup.act(action: CoupCardAction, recipient: PlayerId?): Coup {
     }.nextTurn()
 
     Assassinate -> {
-      // Assassinate costs 3 coins
       val player = findPlayer(requester) ?: return this
       if (player.gameInfo.coins < 3) return this
       
@@ -109,7 +108,6 @@ internal fun Coup.act(action: CoupCardAction, recipient: PlayerId?): Coup {
     }
 
     CoupCardAction.Coup -> {
-      // Coup costs 7 coins
       val player = findPlayer(requester) ?: return this
       if (player.gameInfo.coins < 7) return this
       
@@ -132,7 +130,6 @@ internal fun Coup.act(action: CoupCardAction, recipient: PlayerId?): Coup {
           else -> player
         }
       }
-      // After stealing, move to the next player's turn
       copy(players = newPlayers).nextTurn()
     }
 
