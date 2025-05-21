@@ -168,7 +168,7 @@ object CoupReducer : StoreReducer<Coup, CoupClient, CoupAction> {
         }
         state.updatePlayer(playerAction.playerId) {
           copy(cards = action.cards)
-        }.copy(deck = state.deck + deckCards.shuffled())
+        }.copy(deck = state.deck + deckCards.shuffled()).nextTurn()
       }
     }
   }
