@@ -83,29 +83,43 @@ internal fun Coup.act(action: CoupCardAction, recipient: PlayerId?): Coup {
   return when (action) {
     Income -> updatePlayer(requester) {
       copy(coins = coins + 1)
-    }
+    }.nextTurn()
 
     ForeignAid -> updatePlayer(requester) {
       copy(coins = coins + 2)
-    }
+    }.nextTurn()
 
     Tax -> updatePlayer(requester) {
       copy(coins = coins + 3)
+    }.nextTurn()
+
+    Assassinate -> {
+      val player = findPlayer(requester) ?: return this
+      if (player.gameInfo.coins < 3) return this
+      
+      updatePlayer(requester) {
+        copy(coins = coins - 3)
+      }.copy(
+        playerAction = RequestingLoseCard(
+          playerId = recipient!!,
+          reason = Assassinated(requester = requester)
+        )
+      )
     }
 
-    Assassinate -> copy(
-      playerAction = RequestingLoseCard(
-        playerId = recipient!!,
-        reason = Assassinated(requester = requester)
+    CoupCardAction.Coup -> {
+      val player = findPlayer(requester) ?: return this
+      if (player.gameInfo.coins < 7) return this
+      
+      updatePlayer(requester) {
+        copy(coins = coins - 7)
+      }.copy(
+        playerAction = RequestingLoseCard(
+          playerId = recipient!!,
+          reason = Couped(requester = requester)
+        )
       )
-    )
-
-    CoupCardAction.Coup -> copy(
-      playerAction = RequestingLoseCard(
-        playerId = recipient!!,
-        reason = Couped(requester = requester)
-      )
-    )
+    }
 
     Steal -> {
       val coinTransfer = findPlayer(recipient!!)?.gameInfo?.coins?.coerceAtMost(2) ?: return this
@@ -116,7 +130,7 @@ internal fun Coup.act(action: CoupCardAction, recipient: PlayerId?): Coup {
           else -> player
         }
       }
-      copy(players = newPlayers)
+      copy(players = newPlayers).nextTurn()
     }
 
     Exchange -> {
@@ -132,11 +146,11 @@ internal fun Coup.act(action: CoupCardAction, recipient: PlayerId?): Coup {
 
 internal fun Coup.postLoseCard(reason: Reason): Coup {
   return when (reason) {
-    is Assassinated, is Couped, is ContestSucceeded, is BlockContestFailed -> this
+    is Assassinated, is Couped -> nextTurn()
+    is ContestSucceeded, is BlockContestFailed -> nextTurn()
     is ContestFailed -> {
       act(reason.pendingAction)
     }
-
     is BlockContestSucceeded -> {
       act(reason.pendingBlock.action)
     }
